@@ -10,7 +10,9 @@ const   express        =   require("express"),
         LocalStrategy  =   require("passport-local"),
         flash          =   require("connect-flash"),
         methodOverride =   require("method-override"),
-        MongoStore     =   require("connect-mongo")(session);
+        MongoStore     =   require("connect-mongo")(session),
+        fs             =   require("fs"),
+        vm             =   require("vm");
 
 
 
@@ -165,6 +167,45 @@ app.get("/", function(req, res) {
 
 app.get("/health", function(req, res) {
     res.status(200).send("Server is healthy and running!");
+});
+
+// TEMPORARY SEEDING ROUTE - WILL BE REMOVED AFTER USE
+app.get("/admin/seed-remote-db", async (req, res) => {
+    try {
+        console.log("Starting remote seeding...");
+        const fileContents = fs.readFileSync(path.join(__dirname, "database_trains.md"), "utf8");
+        const cleanContents = fileContents.replace(/"PATNA""MANGALORE"/g, '"PATNA", destination: "MANGALORE"');
+        const regex = /db\.trains\.insert\(([\s\S]+?)\);/g;
+        let match;
+        let successCount = 0;
+        let failCount = 0;
+
+        // Clear existing data first to avoid duplicates
+        await Train.deleteMany({});
+        await Seats.deleteMany({});
+
+        while ((match = regex.exec(cleanContents)) !== null) {
+            try {
+                let objStr = match[1];
+                const context = { ObjectId: (id) => id };
+                vm.createContext(context);
+                const trainData = vm.runInContext('(' + objStr + ')', context);
+                
+                if (trainData && trainData.no_of_seats) {
+                    const newSeat = await Seats.create(trainData.no_of_seats);
+                    trainData.seats_status = [newSeat._id];
+                    await Train.create(trainData);
+                    successCount++;
+                }
+            } catch (e) {
+                failCount++;
+            }
+        }
+        res.status(200).send(`Seeding Complete! Imported ${successCount} trains. Failed: ${failCount}`);
+    } catch (err) {
+        console.error("Seeding Error:", err.message);
+        res.status(500).send("Seeding Failed: " + err.message);
+    }
 });
 
 app.get("/helpline",function(req,res){
