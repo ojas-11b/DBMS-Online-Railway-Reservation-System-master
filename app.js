@@ -37,7 +37,13 @@ mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 
 var url = process.env.DATABASEURL || "mongodb://localhost/railway_reservation" ;
-mongoose.connect(url);
+mongoose.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000 // Timeout after 5s
+})
+.then(() => console.log("Successfully connected to MongoDB"))
+.catch(err => console.error("MongoDB connection error:", err.message));
 
 
 //other setups
@@ -140,6 +146,10 @@ passport.deserializeUser(User.deserializeUser());
 //homepage 
 app.get("/",function(req,res){
     res.render("home");
+});
+
+app.get("/health", function(req, res) {
+    res.status(200).send("Server is healthy and running!");
 });
 
 app.get("/helpline",function(req,res){
