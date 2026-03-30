@@ -8,7 +8,8 @@ const   express        =   require("express"),
         passport       =   require("passport"),
         LocalStrategy  =   require("passport-local"),
         flash          =   require("connect-flash"),
-        methodOverride =   require("method-override");
+        methodOverride =   require("method-override"),
+        MongoStore     =   require("connect-mongo");
 
 
 
@@ -57,8 +58,14 @@ app.use(methodOverride("_method"));
 app.use(require("express-session")({
     secret:"Indian loves Icecream and watching films",
     resave: false,
-    saveUninitialized:false
-    
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: url,
+        touchAfter: 24 * 3600 // time period in seconds
+    }),
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+    }
 }));
 app.use(flash());
 
