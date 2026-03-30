@@ -4,12 +4,13 @@
 const   express        =   require("express"),
         app            =   express(),
         mongoose       =   require("mongoose"),
+        session        =   require("express-session"),
         bodyParser     =   require("body-parser"),
         passport       =   require("passport"),
         LocalStrategy  =   require("passport-local"),
         flash          =   require("connect-flash"),
         methodOverride =   require("method-override"),
-        MongoStore     =   require("connect-mongo");
+        MongoStore     =   require("connect-mongo")(session);
 
 
 
@@ -55,12 +56,12 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
 
-app.use(require("express-session")({
+app.use(session({
     secret:"Indian loves Icecream and watching films",
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: url,
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection,
         touchAfter: 24 * 3600 // time period in seconds
     }),
     cookie: {
