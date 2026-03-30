@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Railway Reservation - Book Train Tickets Online</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Book train tickets online. Search trains, check PNR status, and reserve your journey with ease.">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        .hero-section {
+            padding: 60px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 75vh;
+        }
+
+        .exchange-icon {
+            text-align: center;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+
+        .exchange-icon i {
+            font-size: 18px;
+            color: #4facfe;
+            background: rgba(79,172,254,0.1);
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s;
+            border: 1px solid rgba(79,172,254,0.2);
+        }
+        
+        .exchange-icon i:hover {
+            transform: rotate(180deg);
+            background: rgba(79,172,254,0.2);
+        }
+
+        .features-section {
+            padding: 50px 0;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .feature-card .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+        }
+
+        .feature-card h4 {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .feature-card p {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            $("#btn_search_train").click(function() {
+                $(this).addClass("active");
+                $("#btn_pnr_status").removeClass("active");
+                $("#pnr_form_container").hide();
+                $("#train_form_container").fadeIn(300);
+            });
+
+            $("#btn_pnr_status").click(function() {
+                $(this).addClass("active");
+                $("#btn_search_train").removeClass("active");
+                $("#train_form_container").hide();
+                $("#pnr_form_container").fadeIn(300);
+            });
+
+            $("#swap_locations").click(function() {
+                var fromVal = $('#inputFrom').val();
+                var toVal = $('#inputTo').val();
+                $('#inputFrom').val(toVal);
+                $('#inputTo').val(fromVal);
+            });
+
+            $(".faq-header").click(function() {
+                $(this).next(".faq-body").slideToggle(200);
+                $(this).find("i").toggleClass("fa-chevron-down fa-chevron-up");
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-inverse glass-navbar">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"><i class="fas fa-train"></i> Railway Reservation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/helpline"><i class="fas fa-phone-alt"></i> Helpline</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <% if(currentUser) { %>
+                        <li><a href="#"><i class="fas fa-user"></i> <%= currentUser.username %></a></li>
+                        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <% } else { %>
+                        <li><a href="/register"><i class="fas fa-user-plus"></i> Signup</a></li>
+                        <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container" style="margin-top: 20px;">
+        <% if(error && error.length > 0){ %>
+            <div class="glass-alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-circle" style="color: #ff6b6b; font-size: 18px;"></i>
+                <span><%= error %></span>
+            </div>
+        <% } %>
+        <% if(success && success.length > 0){ %>
+            <div class="glass-alert alert-success" role="alert">
+                <i class="fas fa-check-circle" style="color: #38ef7d; font-size: 18px;"></i>
+                <span><%= success %></span>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Hero Section with Forms -->
+    <div class="container hero-section">
+        <div class="glass-panel animate-in" style="width: 100%; max-width: 500px;">
+            <h2 class="page-title" style="margin-top: 0; font-size: 24px;"><i class="fas fa-subway"></i> Book Your Journey</h2>
+            
+            <div class="action-tabs">
+                <button id="btn_search_train" class="switch-btn active"><i class="fas fa-search"></i> Search Trains</button>
+                <button id="btn_pnr_status" class="switch-btn"><i class="fas fa-ticket-alt"></i> PNR Status</button>
+            </div>
+
+            <!-- Train Search Form -->
+            <div id="train_form_container">
+                <form action="/train/show" method="POST">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> From Station</label>
+                        <select class="form-control glass-input" id="inputFrom" name="train[source]">
+                            <option value="DELHI">DELHI</option>
+                            <option value="MUMBAI">MUMBAI</option>
+                            <option value="CHENNAI">CHENNAI</option>
+                            <option value="PATNA">PATNA</option>
+                            <option value="BANGALORE">BANGALORE</option>
+                            <option value="MANGALORE">MANGALORE</option>
+                            <option value="NAGPUR">NAGPUR</option>
+                            <option value="KOLKATA">KOLKATA</option>
+                        </select>
+                    </div>
+
+                    <div class="exchange-icon" id="swap_locations">
+                        <i class="fas fa-exchange-alt fa-rotate-90"></i>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> To Station</label>
+                        <select class="form-control glass-input" id="inputTo" name="train[destination]">
+                            <option value="DELHI">DELHI</option>
+                            <option value="MUMBAI">MUMBAI</option>
+                            <option value="CHENNAI">CHENNAI</option>
+                            <option value="PATNA">PATNA</option>
+                            <option value="BANGALORE">BANGALORE</option>
+                            <option value="MANGALORE">MANGALORE</option>
+                            <option value="NAGPUR">NAGPUR</option>
+                            <option value="KOLKATA">KOLKATA</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="far fa-calendar-alt"></i> Journey Date</label>
+                        <input type="date" class="form-control glass-input" name="train[date]" required>
+                    </div>
+
+                    <button type="submit" class="btn glass-btn btn-block" style="margin-top: 25px; font-size: 16px; padding: 14px;">
+                        <i class="fas fa-search"></i> Search Trains
+                    </button>
+                </form>
+            </div>
+
+            <!-- PNR Status Form -->
+            <div id="pnr_form_container" style="display: none;">
+                <form action="/ticket_info/pnr" method="POST">
+                    <div class="form-group">
+                        <label><i class="fas fa-barcode"></i> PNR Number</label>
+                        <input type="text" class="form-control glass-input" name="pnr" placeholder="Enter your PNR number" maxlength="50" required>
+                    </div>
+                    
+                    <button type="submit" class="btn glass-btn btn-block" style="margin-top: 25px; font-size: 16px; padding: 14px;">
+                        <i class="fas fa-check-circle"></i> Check Status
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container features-section">
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(79,172,254,0.12); color: #4facfe;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4>Fast Booking</h4>
+                    <p>Book your tickets in just a few clicks with our streamlined process</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(0,242,254,0.12); color: #00f2fe;">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Secure Payment</h4>
+                    <p>256-bit encrypted payments with multiple gateway options</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(56,239,125,0.12); color: #38ef7d;">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h4>E-Tickets</h4>
+                    <p>Instant e-ticket delivery with PNR tracking available</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(240,147,251,0.12); color: #f093fb;">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>24/7 Support</h4>
+                    <p>Round the clock customer support for all your queries</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="container" style="padding-bottom: 50px;">
+        <h2 class="page-title"><i class="far fa-question-circle"></i> Frequently Asked Questions</h2>
+        
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <span>How can I Book Train Tickets Online?</span>
+                        <i class="fas fa-chevron-down" style="color: #4facfe;"></i>
+                    </div>
+                    <div class="faq-body">
+                        To book train tickets online, log on to our portal and search trains for your preferred route and date. Verify your ID, enter passenger details, and proceed to book securely.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <span>How Many Days in Advance can I Book Train Tickets?</span>
+                        <i class="fas fa-chevron-down" style="color: #4facfe;"></i>
+                    </div>
+                    <div class="faq-body">
+                        Advance Reservation Period for booking train tickets is 120 days (excluding the date of journey).
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <span>What are the Cancellation Charges?</span>
+                        <i class="fas fa-chevron-down" style="color: #4facfe;"></i>
+                    </div>
+                    <div class="faq-body">
+                        Cancellation charges apply based on the time of cancellation prior to the scheduled departure. Early cancellations incur a minimal flat fee, while late ones can incur 25%-50% deductions.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <span>How do I check my PNR status?</span>
+                        <i class="fas fa-chevron-down" style="color: #4facfe;"></i>
+                    </div>
+                    <div class="faq-body">
+                        You can check your PNR status by clicking on the "PNR Status" tab on the homepage. Enter your PNR number and click "Check Status" to view your booking details.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="site-footer">
+        <div class="container">
+            <p><i class="fas fa-train" style="color: #4facfe;"></i> Railway Reservation System &copy; 2024. All rights reserved.</p>
+        </div>
+    </div>
+
+</body>
+</html>

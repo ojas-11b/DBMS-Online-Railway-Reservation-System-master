@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket Cancelled - Railway Reservation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-inverse glass-navbar">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"><i class="fas fa-train"></i> Railway Reservation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="nav navbar-nav">
+                    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/helpline"><i class="fas fa-phone-alt"></i> Helpline</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container section-wrapper">
+        <!-- Cancelled Header -->
+        <div style="text-align: center; margin-bottom: 30px;" class="animate-in">
+            <div style="width: 70px; height: 70px; background: rgba(255,8,68,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fas fa-times" style="font-size: 32px; color: #ff6b6b;"></i>
+            </div>
+            <h2 class="page-title" style="margin-bottom: 5px;">Ticket Cancelled</h2>
+            <p style="color: rgba(255,255,255,0.6);">This ticket has been cancelled</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <!-- Cancelled Ticket Card -->
+                <div class="ticket-card animate-in" style="border-color: rgba(255,8,68,0.2);">
+                    <!-- Ticket Header -->
+                    <div class="ticket-header" style="background: linear-gradient(135deg, rgba(255,8,68,0.1) 0%, rgba(255,107,107,0.05) 100%);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <p style="color: rgba(255,255,255,0.5); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin: 0;">PNR Number</p>
+                                <h3 style="margin: 5px 0 0 0; font-weight: 700; color: rgba(255,255,255,0.5); font-size: 20px; letter-spacing: 2px; text-decoration: line-through;"><%= pnr %></h3>
+                            </div>
+                            <div>
+                                <span class="status-badge cancelled"><i class="fas fa-ban"></i> Cancelled</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ticket Body -->
+                    <div class="ticket-body">
+                        <div class="info-row">
+                            <div><span class="info-label">Train ID</span></div>
+                            <div><span class="info-value" style="font-size: 13px; word-break: break-all;"><%= ticket.train_id %></span></div>
+                        </div>
+                        <div class="info-row">
+                            <div><span class="info-label">Class</span></div>
+                            <div><span class="info-value"><%= ticket.classs %></span></div>
+                        </div>
+                        <div class="info-row">
+                            <div><span class="info-label">Original Price</span></div>
+                            <div><span class="info-value" style="text-decoration: line-through; color: rgba(255,255,255,0.4);"><i class="fas fa-rupee-sign" style="font-size: 14px;"></i> <%= ticket.price %></span></div>
+                        </div>
+                        <div class="info-row" style="border-bottom: none;">
+                            <div><span class="info-label">Passenger Ref</span></div>
+                            <div><span class="info-value" style="font-size: 13px; word-break: break-all;"><%= ticket.pass %></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Refund Info -->
+                <div class="refund-box animate-in">
+                    <i class="fas fa-hand-holding-usd" style="font-size: 36px; color: #38ef7d; margin-bottom: 10px;"></i>
+                    <p style="color: rgba(255,255,255,0.7); margin: 0;">Refund Amount (30%)</p>
+                    <div class="refund-amount">
+                        <i class="fas fa-rupee-sign" style="font-size: 22px;"></i> <%= (ticket.price * 0.3).toFixed(2) %>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 5px;">
+                        The refund will be credited to your account within 5-7 business days
+                    </p>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <a href="/" class="btn glass-btn"><i class="fas fa-home"></i> Book Another Ticket</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 Railway Reservation System. All rights reserved.</p>
+        </div>
+    </div>
+
+</body>
+</html>

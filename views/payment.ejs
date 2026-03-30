@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Gateway - Railway Reservation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            // Payment method switching
+            $(".payment-method-card").click(function(){
+                $(".payment-method-card").removeClass("active");
+                $(this).addClass("active");
+                $(".payment-form").hide();
+                var target = $(this).data("target");
+                $("#" + target).fadeIn(300);
+            });
+
+            // Show visa by default
+            $(".payment-method-card[data-target='visa']").addClass("active");
+            $("#visa").show();
+        });
+    </script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-inverse glass-navbar">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"><i class="fas fa-train"></i> Railway Reservation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="nav navbar-nav">
+                    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/helpline"><i class="fas fa-phone-alt"></i> Helpline</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container section-wrapper">
+        <h2 class="page-title animate-in"><i class="fas fa-credit-card"></i> Payment Gateway</h2>
+        <p class="page-subtitle">Complete your payment to confirm your booking</p>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+
+                <!-- Order Summary -->
+                <div class="glass-panel animate-in" style="margin-bottom: 25px;">
+                    <h4 style="font-weight: 600; margin-bottom: 18px; color: rgba(255,255,255,0.9);"><i class="fas fa-receipt" style="color: #4facfe;"></i> Booking Summary</h4>
+                    <div class="info-row">
+                        <div><span class="info-label">Passenger</span></div>
+                        <div><span class="info-value"><%= feed.person.name %></span></div>
+                    </div>
+                    <div class="info-row">
+                        <div><span class="info-label">Class</span></div>
+                        <div><span class="info-value"><%= feed.classs %></span></div>
+                    </div>
+                    <div class="info-row">
+                        <div><span class="info-label">Journey Date</span></div>
+                        <div><span class="info-value"><%= feed.date %></span></div>
+                    </div>
+                    <div class="info-row" style="border-bottom: none;">
+                        <div><span class="info-label">Total Amount</span></div>
+                        <div><span class="info-value highlight"><i class="fas fa-rupee-sign" style="font-size: 16px;"></i> <%= feed.price %></span></div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="glass-panel animate-in">
+                    <h4 style="font-weight: 600; margin-bottom: 5px; color: rgba(255,255,255,0.9);"><i class="fas fa-wallet" style="color: #4facfe;"></i> Select Payment Method</h4>
+
+                    <div class="payment-methods">
+                        <div class="payment-method-card" data-target="visa">
+                            <i class="fab fa-cc-visa" style="color: #1a1f71;"></i>
+                            <span>Debit Card</span>
+                        </div>
+                        <div class="payment-method-card" data-target="cc">
+                            <i class="fas fa-credit-card" style="color: #f093fb;"></i>
+                            <span>Credit Card</span>
+                        </div>
+                        <div class="payment-method-card" data-target="mm">
+                            <i class="fab fa-cc-mastercard" style="color: #ff5f6d;"></i>
+                            <span>Mastercard</span>
+                        </div>
+                        <div class="payment-method-card" data-target="amazon">
+                            <i class="fab fa-cc-amazon-pay" style="color: #ff9900;"></i>
+                            <span>Amazon Pay</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- VISA / DEBIT CARD FORM -->
+                    <form id="visa" class="payment-form" action="/ticket/<%= feed.train_id %>" method="POST" style="display: block;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label><i class="far fa-credit-card"></i> Card Number</label>
+                                    <input type="text" class="form-control glass-input" placeholder="XXXX XXXX XXXX XXXX" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label><i class="fas fa-user"></i> Name on Card</label>
+                                    <input type="text" class="form-control glass-input" placeholder="Cardholder name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><i class="fas fa-key"></i> CVV</label>
+                                    <input type="number" class="form-control glass-input" placeholder="XXX" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><i class="far fa-calendar"></i> Expiry</label>
+                                    <input type="month" class="form-control glass-input" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden fields -->
+                        <div style="display:none;">
+                            <input type="text" name="person[sex]" value="<%= feed.person.sex %>">
+                            <input type="text" name="person[name]" value="<%= feed.person.name %>">
+                            <input type="text" name="classs" value="<%= feed.classs %>">
+                            <input type="number" name="person[age]" value="<%= feed.person.age %>">
+                            <input type="number" name="price" value="<%= feed.price %>">
+                            <input type="date" name="date" value="<%= feed.date %>">
+                            <input type="number" name="person[phone]" value="<%= feed.person.phone %>">
+                            <input type="text" name="person[email]" value="<%= feed.person.email %>">
+                        </div>
+
+                        <button type="submit" class="btn glass-btn btn-block" style="font-size: 16px; padding: 14px; margin-top: 15px;">
+                            <i class="fas fa-lock"></i> Pay <i class="fas fa-rupee-sign" style="font-size: 14px;"></i> <%= feed.price %>
+                        </button>
+                    </form>
+
+                    <!-- CREDIT CARD FORM -->
+                    <form id="cc" class="payment-form" action="/ticket/<%= feed.train_id %>" method="POST" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label><i class="far fa-credit-card"></i> Credit Card Number</label>
+                                    <input type="text" class="form-control glass-input" placeholder="XXXX XXXX XXXX XXXX" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label><i class="fas fa-user"></i> Name on Card</label>
+                                    <input type="text" class="form-control glass-input" placeholder="Cardholder name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><i class="fas fa-key"></i> CVV</label>
+                                    <input type="number" class="form-control glass-input" placeholder="XXX" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><i class="far fa-calendar"></i> Expiry</label>
+                                    <input type="month" class="form-control glass-input" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:none;">
+                            <input type="text" name="person[sex]" value="<%= feed.person.sex %>">
+                            <input type="text" name="person[name]" value="<%= feed.person.name %>">
+                            <input type="text" name="classs" value="<%= feed.classs %>">
+                            <input type="number" name="person[age]" value="<%= feed.person.age %>">
+                            <input type="number" name="price" value="<%= feed.price %>">
+                            <input type="date" name="date" value="<%= feed.date %>">
+                            <input type="number" name="person[phone]" value="<%= feed.person.phone %>">
+                            <input type="text" name="person[email]" value="<%= feed.person.email %>">
+                        </div>
+
+                        <button type="submit" class="btn glass-btn btn-block" style="font-size: 16px; padding: 14px; margin-top: 15px;">
+                            <i class="fas fa-lock"></i> Pay <i class="fas fa-rupee-sign" style="font-size: 14px;"></i> <%= feed.price %>
+                        </button>
+                    </form>
+
+                    <!-- MASTERCARD FORM -->
+                    <form id="mm" class="payment-form" action="/ticket/<%= feed.train_id %>" method="POST" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label><i class="fab fa-cc-mastercard"></i> Mastercard Number</label>
+                                    <input type="text" class="form-control glass-input" placeholder="XXXX XXXX XXXX XXXX" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label><i class="fas fa-key"></i> Sequence No</label>
+                                    <input type="number" class="form-control glass-input" placeholder="Seq No" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label><i class="fas fa-map-pin"></i> Zip Code</label>
+                                    <input type="text" class="form-control glass-input" placeholder="Zip Code" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:none;">
+                            <input type="text" name="person[sex]" value="<%= feed.person.sex %>">
+                            <input type="text" name="person[name]" value="<%= feed.person.name %>">
+                            <input type="text" name="classs" value="<%= feed.classs %>">
+                            <input type="number" name="person[age]" value="<%= feed.person.age %>">
+                            <input type="number" name="price" value="<%= feed.price %>">
+                            <input type="date" name="date" value="<%= feed.date %>">
+                            <input type="number" name="person[phone]" value="<%= feed.person.phone %>">
+                            <input type="text" name="person[email]" value="<%= feed.person.email %>">
+                        </div>
+
+                        <button type="submit" class="btn glass-btn btn-block" style="font-size: 16px; padding: 14px; margin-top: 15px;">
+                            <i class="fas fa-lock"></i> Pay <i class="fas fa-rupee-sign" style="font-size: 14px;"></i> <%= feed.price %>
+                        </button>
+                    </form>
+
+                    <!-- AMAZON PAY FORM -->
+                    <form id="amazon" class="payment-form" action="/ticket/<%= feed.train_id %>" method="POST" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label><i class="fas fa-envelope"></i> Amazon Email</label>
+                                    <input type="email" class="form-control glass-input" placeholder="your@email.com" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label><i class="fas fa-lock"></i> Password</label>
+                                    <input type="password" class="form-control glass-input" placeholder="Password" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label><i class="fas fa-map-pin"></i> Amazon Pay Zip</label>
+                                    <input type="text" class="form-control glass-input" placeholder="Zip Code" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:none;">
+                            <input type="text" name="person[sex]" value="<%= feed.person.sex %>">
+                            <input type="text" name="person[name]" value="<%= feed.person.name %>">
+                            <input type="text" name="classs" value="<%= feed.classs %>">
+                            <input type="number" name="person[age]" value="<%= feed.person.age %>">
+                            <input type="number" name="price" value="<%= feed.price %>">
+                            <input type="date" name="date" value="<%= feed.date %>">
+                            <input type="number" name="person[phone]" value="<%= feed.person.phone %>">
+                            <input type="text" name="person[email]" value="<%= feed.person.email %>">
+                        </div>
+
+                        <button type="submit" class="btn glass-btn btn-block" style="font-size: 16px; padding: 14px; margin-top: 15px;">
+                            <i class="fas fa-lock"></i> Pay <i class="fas fa-rupee-sign" style="font-size: 14px;"></i> <%= feed.price %>
+                        </button>
+                    </form>
+
+                    <p style="text-align: center; margin-top: 15px; color: rgba(255,255,255,0.4); font-size: 12px;">
+                        <i class="fas fa-shield-alt"></i> Your payment is secured with 256-bit encryption
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 Railway Reservation System. All rights reserved.</p>
+        </div>
+    </div>
+
+</body>
+</html>

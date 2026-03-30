@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seat Availability - Railway Reservation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-inverse glass-navbar">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"><i class="fas fa-train"></i> Railway Reservation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="nav navbar-nav">
+                    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/helpline"><i class="fas fa-phone-alt"></i> Helpline</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/register"><i class="fas fa-user-plus"></i> Signup</a></li>
+                    <li><a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container section-wrapper">
+        <!-- Route Header -->
+        <div class="glass-panel animate-in" style="text-align: center; margin-bottom: 30px;">
+            <div class="route-display">
+                <div class="route-station">
+                    <div class="station-label">From</div>
+                    <div class="station-name"><i class="fas fa-map-marker-alt" style="font-size: 16px;"></i> <%= train.source %></div>
+                </div>
+                <div class="route-arrow">
+                    <i class="fas fa-arrow-right" style="font-size: 18px;"></i>
+                    <div class="line"></div>
+                </div>
+                <div class="route-station">
+                    <div class="station-label">To</div>
+                    <div class="station-name"><i class="fas fa-map-marker-alt" style="font-size: 16px;"></i> <%= train.destination %></div>
+                </div>
+            </div>
+            <p style="margin-top: 15px; color: rgba(255,255,255,0.6); font-size: 15px;">
+                <i class="far fa-calendar-alt"></i> Journey Date: <strong style="color: #00f2fe;"><%= date %></strong>
+            </p>
+        </div>
+
+        <% var f_class = seats.one_A %>
+        <% var s_class = seats.two_A %>
+        <% var t_class = seats.three_A %>
+        <% var sleeper = seats.sleeper %>
+        <% var t = train.train_details[0] %>
+
+        <% if(f_class > 0 || s_class > 0 || t_class > 0 || sleeper > 0) { %>
+            
+            <h2 class="page-title animate-in"><i class="fas fa-couch"></i> Select Your Class</h2>
+            <p class="page-subtitle">Choose your preferred travel class to proceed with booking</p>
+
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    
+                    <% if(f_class > 0) { %>
+                    <div class="class-card animate-in">
+                        <div class="class-info">
+                            <div class="class-badge first-ac">1A</div>
+                            <div class="class-details">
+                                <h4>First AC</h4>
+                                <p><i class="fas fa-subway"></i> <%= t.name %> &middot; #<%= t.number %></p>
+                                <p><i class="far fa-clock"></i> <%= t.travel_time %> &middot; Departs <%= t.start_time %></p>
+                            </div>
+                        </div>
+                        <div class="class-price">
+                            <div class="amount"><i class="fas fa-rupee-sign" style="font-size: 16px;"></i> <%= 1000 + t.fare %></div>
+                            <a href="/train/show/check_availability/<%= train._id %>/<%= date %>/one_A/<%= 1000 + t.fare %>/secret" class="btn glass-btn" style="margin-top: 10px; padding: 8px 20px; font-size: 13px;">
+                                <i class="fas fa-arrow-right"></i> Book Now
+                            </a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <% if(s_class > 0) { %>
+                    <div class="class-card animate-in">
+                        <div class="class-info">
+                            <div class="class-badge second-ac">2A</div>
+                            <div class="class-details">
+                                <h4>Second AC</h4>
+                                <p><i class="fas fa-subway"></i> <%= t.name %> &middot; #<%= t.number %></p>
+                                <p><i class="far fa-clock"></i> <%= t.travel_time %> &middot; Departs <%= t.start_time %></p>
+                            </div>
+                        </div>
+                        <div class="class-price">
+                            <div class="amount"><i class="fas fa-rupee-sign" style="font-size: 16px;"></i> <%= 500 + t.fare %></div>
+                            <a href="/train/show/check_availability/<%= train._id %>/<%= date %>/two_A/<%= 500 + t.fare %>/secret" class="btn glass-btn" style="margin-top: 10px; padding: 8px 20px; font-size: 13px;">
+                                <i class="fas fa-arrow-right"></i> Book Now
+                            </a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <% if(t_class > 0) { %>
+                    <div class="class-card animate-in">
+                        <div class="class-info">
+                            <div class="class-badge third-ac">3A</div>
+                            <div class="class-details">
+                                <h4>Third AC</h4>
+                                <p><i class="fas fa-subway"></i> <%= t.name %> &middot; #<%= t.number %></p>
+                                <p><i class="far fa-clock"></i> <%= t.travel_time %> &middot; Departs <%= t.start_time %></p>
+                            </div>
+                        </div>
+                        <div class="class-price">
+                            <div class="amount"><i class="fas fa-rupee-sign" style="font-size: 16px;"></i> <%= 250 + t.fare %></div>
+                            <a href="/train/show/check_availability/<%= train._id %>/<%= date %>/three_A/<%= 250 + t.fare %>/secret" class="btn glass-btn" style="margin-top: 10px; padding: 8px 20px; font-size: 13px;">
+                                <i class="fas fa-arrow-right"></i> Book Now
+                            </a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <% if(sleeper > 0) { %>
+                    <div class="class-card animate-in">
+                        <div class="class-info">
+                            <div class="class-badge sleeper">SL</div>
+                            <div class="class-details">
+                                <h4>Sleeper</h4>
+                                <p><i class="fas fa-subway"></i> <%= t.name %> &middot; #<%= t.number %></p>
+                                <p><i class="far fa-clock"></i> <%= t.travel_time %> &middot; Departs <%= t.start_time %></p>
+                            </div>
+                        </div>
+                        <div class="class-price">
+                            <div class="amount"><i class="fas fa-rupee-sign" style="font-size: 16px;"></i> <%= t.fare %></div>
+                            <a href="/train/show/check_availability/<%= train._id %>/<%= date %>/sleeper/<%= t.fare %>/secret" class="btn glass-btn" style="margin-top: 10px; padding: 8px 20px; font-size: 13px;">
+                                <i class="fas fa-arrow-right"></i> Book Now
+                            </a>
+                        </div>
+                    </div>
+                    <% } %>
+
+                </div>
+            </div>
+
+        <% } else { %>
+            <div class="glass-panel" style="text-align: center; padding: 50px;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 50px; color: #ff6b6b; margin-bottom: 20px;"></i>
+                <h3 style="font-weight: 600;">Sold Out!</h3>
+                <p style="color: rgba(255,255,255,0.6); margin-top: 10px;">All seats are currently occupied. Try booking Tatkal tickets at 10:00 AM, two days before your journey date.</p>
+                <a href="/" class="btn glass-btn" style="margin-top: 20px;"><i class="fas fa-search"></i> Search Again</a>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Footer -->
+    <div class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 Railway Reservation System. All rights reserved.</p>
+        </div>
+    </div>
+
+</body>
+</html>

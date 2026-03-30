@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E-Ticket - Railway Reservation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-inverse glass-navbar">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"><i class="fas fa-train"></i> Railway Reservation</a>
+            </div>
+            <div class="collapse navbar-collapse" id="main-nav">
+                <ul class="nav navbar-nav">
+                    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/helpline"><i class="fas fa-phone-alt"></i> Helpline</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container section-wrapper">
+        <!-- PNR Status Header -->
+        <div style="text-align: center; margin-bottom: 30px;" class="animate-in">
+            <div style="width: 70px; height: 70px; background: rgba(79,172,254,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fas fa-ticket-alt" style="font-size: 28px; color: #4facfe;"></i>
+            </div>
+            <h2 class="page-title" style="margin-bottom: 5px;">PNR Status</h2>
+            <p style="color: rgba(255,255,255,0.6);">Your ticket details are shown below</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <!-- Ticket Card -->
+                <div class="ticket-card animate-in">
+                    <!-- Ticket Header -->
+                    <div class="ticket-header">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <p style="color: rgba(255,255,255,0.5); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin: 0;">PNR Number</p>
+                                <h3 style="margin: 5px 0 0 0; font-weight: 700; color: #00f2fe; font-size: 20px; letter-spacing: 2px;"><%= pnr %></h3>
+                            </div>
+                            <div>
+                                <span class="status-badge confirmed"><i class="fas fa-check-circle"></i> Confirmed</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ticket Body -->
+                    <div class="ticket-body">
+                        <!-- Route -->
+                        <div class="route-display" style="margin: 15px 0 25px;">
+                            <div class="route-station">
+                                <div class="station-label">From</div>
+                                <div class="station-name"><%= td.src %></div>
+                            </div>
+                            <div class="route-arrow">
+                                <i class="fas fa-train" style="font-size: 16px; color: #4facfe;"></i>
+                                <div class="line"></div>
+                            </div>
+                            <div class="route-station">
+                                <div class="station-label">To</div>
+                                <div class="station-name"><%= td.dest %></div>
+                            </div>
+                        </div>
+
+                        <!-- Train Details -->
+                        <div class="info-row">
+                            <div><span class="info-label">Train Name</span></div>
+                            <div><span class="info-value"><%= td.name %></span></div>
+                        </div>
+                        <div class="info-row">
+                            <div><span class="info-label">Train Number</span></div>
+                            <div><span class="info-value accent"><%= td.number %></span></div>
+                        </div>
+                        <div class="info-row">
+                            <div><span class="info-label">Departure Time</span></div>
+                            <div><span class="info-value"><i class="far fa-clock" style="color: #00f2fe;"></i> <%= td.start %></span></div>
+                        </div>
+                        <div class="info-row">
+                            <div><span class="info-label">Journey Duration</span></div>
+                            <div><span class="info-value"><%= td.jour %></span></div>
+                        </div>
+                        <div class="info-row">
+                            <div><span class="info-label">Class</span></div>
+                            <div><span class="info-value accent"><%= td.classs %></span></div>
+                        </div>
+                        <div class="info-row">
+                            <div><span class="info-label">Journey Date</span></div>
+                            <div><span class="info-value"><i class="far fa-calendar-alt" style="color: #00f2fe;"></i> <%= td.date %></span></div>
+                        </div>
+                        <div class="info-row">
+                            <div><span class="info-label">Fare</span></div>
+                            <div><span class="info-value"><i class="fas fa-rupee-sign" style="font-size: 14px;"></i> <%= td.fare %></span></div>
+                        </div>
+                        <div class="info-row" style="border-bottom: none;">
+                            <div><span class="info-label">Amount Paid</span></div>
+                            <div><span class="info-value highlight"><i class="fas fa-rupee-sign" style="font-size: 16px;"></i> <%= td.price_actual %></span></div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Passenger Details -->
+                        <h4 style="font-weight: 600; margin-bottom: 15px;"><i class="fas fa-user" style="color: #4facfe;"></i> Passenger Details</h4>
+                        <div class="table-responsive">
+                            <table class="table glass-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-weight: 600;">1</td>
+                                        <td><%= passenger.name %></td>
+                                        <td><%= passenger.age %></td>
+                                        <td><%= passenger.sex %></td>
+                                        <td><%= passenger.email %></td>
+                                        <td><%= passenger.phone %></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Ticket Footer -->
+                    <div class="ticket-footer">
+                        <button type="button" class="btn glass-btn" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print Ticket
+                        </button>
+                        <form action="/ticket/cancel/<%= pnr %>" method="POST" style="display: inline;">
+                            <button type="submit" class="btn glass-btn-danger" onclick="return confirm('Are you sure you want to cancel this ticket?')">
+                                <i class="fas fa-times-circle"></i> Cancel Ticket
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <a href="/" class="btn glass-btn-outline"><i class="fas fa-home"></i> Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 Railway Reservation System. All rights reserved.</p>
+        </div>
+    </div>
+
+</body>
+</html>
