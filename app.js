@@ -50,7 +50,8 @@ mongoose.connect(url, {
 //app.use(bodyParser.urlencoded({extended : true}));
 app.set("view engine","ejs");
 var path = require('path');
-app.use(express.static(__dirname + '/public'));
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
 
 app.use(require("express-session")({
@@ -144,8 +145,14 @@ passport.deserializeUser(User.deserializeUser());
 
 
 //homepage 
-app.get("/",function(req,res){
-    res.render("home");
+app.get("/", function(req, res) {
+    res.render("home", function(err, html) {
+        if (err) {
+            console.error("Render Error:", err.message);
+            return res.status(500).send("Home Page Render Error: " + err.message);
+        }
+        res.send(html);
+    });
 });
 
 app.get("/health", function(req, res) {
