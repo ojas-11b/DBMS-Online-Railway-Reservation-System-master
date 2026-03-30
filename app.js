@@ -208,6 +208,15 @@ app.get("/admin/seed-remote-db", async (req, res) => {
     }
 });
 
+app.get("/admin/check-count", async (req, res) => {
+    try {
+        const count = await Train.countDocuments();
+        res.status(200).send(`TOTAL_TRAINS: ${count}`);
+    } catch (err) {
+        res.status(500).send("Error: " + err.message);
+    }
+});
+
 app.get("/helpline",function(req,res){
     res.render("helpline");
 });
